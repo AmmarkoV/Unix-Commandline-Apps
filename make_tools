@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd pick 
+./make
+cd ..
+
+
+cd sp 
+./make
+cd ..
+
+
+exit 0
