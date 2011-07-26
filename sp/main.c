@@ -1,55 +1,50 @@
-/***************************************************************************
-* Copyright (C) 2010 by Ammar Qammaz *
-* ammarkov@gmail.com *
-* *
-* This program is free software; you can redistribute it and/or modify *
-* it under the terms of the GNU General Public License as published by *
-* the Free Software Foundation; either version 2 of the License, or *
-* (at your option) any later version. *
-* *
-* This program is distributed in the hope that it will be useful, *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the *
-* GNU General Public License for more details. *
-* *
-* You should have received a copy of the GNU General Public License *
-* along with this program; if not, write to the *
-* Free Software Foundation, Inc., *
-* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. *
-***************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
-/*
- Small command line utility to pick randomly between N arguments
 
-*/
-int main(int argc, const char* argv[] )
-{
-    if ( argc != 3 )
-     {
-       printf("Usage : sp arg1 arg2!\n");
-       printf("Will swap two files\n");
-       return 0;
-     }
+enum errors {
+    EARGNUM = 1, /* wrong number of arguments */
+    ETMPFAIL,    /* creating temporary file failed */
+    ERNMFAIL     /* rename failed */
+};
 
+/* rename the given files */
+void frename(const char* file_from, const char* file_to) {
+    char* errrnm = "error: couldn't rename file: %s %s";
+    int status = rename(file_from, file_to);
 
-    /* We want to make 3 cp operations and one rm */
-    int i=0;
-    char command[2048]={0};
+    if (status) {
+        fprintf(stderr, errrnm, file_from, file_to);
+        exit(ERNMFAIL);
+    }
+}
 
-    sprintf(command,"mv %s intermediate_copy_file_123456789_1\n",argv[1]);
-    i=system(command);
-    if ( i!=0 ) { printf("Error moving to intermediate file for swapping\n");
-                  return 1; }
+int main(int argc, const char* argv[]) {
+    char* errtmpcrt = "error: couldn't create temporary file";
+    char* tempfile;
 
-    sprintf(command,"mv %s %s\n",argv[2],argv[1]);
-    i=system(command);
-    if ( i!=0 ) { printf("Error moving from target file to target while swapping\n"); return 1; }
+    if (argc != 3) {
+        fprintf(stdout, "usage: %s file1 file2\n", __FILE__);
+        return EARGNUM;
+    }
 
-    sprintf(command,"mv intermediate_copy_file_123456789_1 %s\n",argv[2]);
-    i=system(command);
-    if ( i!=0 ) { printf("Error moving intermidiate file to target for swapping\n"); return 1; }
+    /* generate a unique name for the temporary file
+     * NOTE: this is dangerous, as the time between the name
+     * generation and the rename, could be taken  advantage
+     * and be used to actually create a file with the same name
+     * as the generated one, and thus failing to use that name.
+     * Consider mkstemp or tmpfile which are safer.
+     */
+    tempfile = tempnam("/tmp", "tmp.mv");
+    if (tempfile == NULL) {
+        fprintf(stderr, errtmpcrt);
+        return ETMPFAIL;
+    }
 
+    /* swap the filenames */
+    frename(argv[1], tempfile);
+    frename(argv[2], argv[1]);
+    frename(tempfile, argv[2]);
 
+    /* all good :-) */
     return 0;
 }
