@@ -9,5 +9,9 @@ cd sp
 ./make
 cd ..
 
+cd lddr 
+./make
+cd ..
+
 
 exit 0

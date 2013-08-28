@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "hashmap.h"
 
 
 #define NORMAL "\033[0m"
@@ -24,6 +25,10 @@
 #define BOLDWHITE "\033[1m\033[37m" /* Bold White */
 
 #define SIZEOFOUTPUT 1024
+
+
+struct hashMap * hm=0;
+
 
 int runLdd(char * filename)
 {
@@ -56,7 +61,26 @@ int runLdd(char * filename)
                                                fprintf(stderr,RED "Not Found - Line %u , %s \n" NORMAL,i,output);
                                              } else
                                              {
-                                               fprintf(stderr,GREEN "Found - Line %u , %s \n" NORMAL,i,output);
+                                               //fprintf(stderr,GREEN "Found - Line %u , %s \n" NORMAL,i,output);
+                                               char * link = strstr(output,"=>");
+                                               if (link!=0)
+                                               {
+                                                 link+=3;
+
+                                                 int z=0;
+                                                 while (z<strlen(link))
+                                                 {
+                                                   if (link[z]==' ') { link[z]=0; }
+                                                   ++z;
+                                                 }
+                                                 fprintf(stderr,"%s\n",link);
+
+                                                 if (!hashMap_ContainsKey(hm,link))
+                                                 {
+                                                  hashMap_Add(hm,link,0,0);
+                                                  runLdd(link);
+                                                 }
+                                               }
                                              }
 
     }
@@ -83,6 +107,12 @@ int runLdd(char * filename)
 
 int main(int argc, const char* argv[])
 {
+    hm = hashMap_Create(2000,1000,0);
+
+
     runLdd(argv[1]);
+
+
+    hashMap_Destroy(hm);
     return 0;
 }
