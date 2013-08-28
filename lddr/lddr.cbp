@@ -32,6 +32,10 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="hashmap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="hashmap.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

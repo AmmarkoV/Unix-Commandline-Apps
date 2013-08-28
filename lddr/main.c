@@ -95,20 +95,10 @@ int runLdd(char * filename)
 
 
 
-
-
-
-
-
-
-
-
-
-
 int main(int argc, const char* argv[])
 {
     hm = hashMap_Create(2000,1000,0);
-
+    if ( hm == 0 ) { fprintf(stderr,"Could not create hashMap\n"); return 1; }
 
     runLdd(argv[1]);
 
