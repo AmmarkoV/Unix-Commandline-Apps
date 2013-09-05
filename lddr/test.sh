@@ -1,5 +1,7 @@
 #!/bin/bash 
-./lddr /home/ammar/Documents/3dParty/mbv/trunk/Bin/SynergyTrackerRGBD 2> test.txt
+./lddr -n -maxDepth 10 /home/ammar/Documents/3dParty/mbv/trunk/Bin/SynergyTrackerRGBD
+
+./lddr  -maxDepth 10  /home/ammar/Documents/3dParty/mbv/trunk/Bin/SynergyTrackerRGBD 2> test.txt
 
 
 #Make sure that the linked files are unique

@@ -27,11 +27,18 @@
 #define SIZEOFOUTPUT 1024
 
 
+int printFoundLibs = 1;
+int printNotFoundLibs = 1;
+int maxDepth=0;
+
+
 struct hashMap * hm=0;
 
 
-int runLdd(char * filename)
+int runLdd(char * filename,int depth)
 {
+ if (maxDepth!=0) { if (depth>maxDepth) { return 0; } }
+
  char output[SIZEOFOUTPUT]={0};
 
  char * command=(char * ) malloc(sizeof(char) * (strlen(filename)+10) );
@@ -58,7 +65,7 @@ int runLdd(char * filename)
         ++i;
 
         if ( strstr(output,"not found")!=0 ) {
-                                               fprintf(stderr,RED "Not Found - Line %u , %s \n" NORMAL,i,output);
+                                               if (printNotFoundLibs)  {  printf(RED "Not Found - Line %u , %s \n" NORMAL,i,output); }
                                              } else
                                              {
                                                //fprintf(stderr,GREEN "Found - Line %u , %s \n" NORMAL,i,output);
@@ -73,12 +80,12 @@ int runLdd(char * filename)
                                                    if (link[z]==' ') { link[z]=0; }
                                                    ++z;
                                                  }
-                                                 fprintf(stderr,"%s\n",link);
+                                                  if (printFoundLibs)  { fprintf(stderr,"%s\n",link); }
 
                                                  if (!hashMap_ContainsKey(hm,link))
                                                  {
                                                   hashMap_Add(hm,link,0,0);
-                                                  runLdd(link);
+                                                  runLdd(link,depth+1);
                                                  }
                                                }
                                              }
@@ -97,12 +104,22 @@ int runLdd(char * filename)
 
 int main(int argc, const char* argv[])
 {
-    hm = hashMap_Create(2000,1000,0);
-    if ( hm == 0 ) { fprintf(stderr,"Could not create hashMap\n"); return 1; }
+  int i=0;
+  for (i=0; i<argc; i++)
+  {
+    if (strcmp(argv[i],"-n")==0) { printNotFoundLibs=1; printFoundLibs=0; } else
+    if (strcmp(argv[i],"-f")==0) { printNotFoundLibs=0; printFoundLibs=1; }
+    if (strcmp(argv[i],"-maxDepth")==0)  {
+                                          maxDepth = atoi(argv[i+1]);
+                                         }
+  }
 
-    runLdd(argv[1]);
+  hm = hashMap_Create(2000,1000,0);
+  if ( hm == 0 ) { fprintf(stderr,"Could not create hashMap\n"); return 1; }
+
+  runLdd((char*) argv[argc-1],0);
 
 
-    hashMap_Destroy(hm);
-    return 0;
+  hashMap_Destroy(hm);
+  return 0;
 }
