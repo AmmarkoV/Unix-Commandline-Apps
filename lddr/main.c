@@ -24,7 +24,7 @@
 #define BOLDCYAN "\033[1m\033[36m" /* Bold Cyan */
 #define BOLDWHITE "\033[1m\033[37m" /* Bold White */
 
-#define SIZEOFOUTPUT 1024
+#define SIZEOFOUTPUT 4096
 
 
 int printFoundLibs = 1;
@@ -38,9 +38,10 @@ struct hashMap * hm=0;
 
 int linkToFileInCurrentDir(char * filename)
 {
-  char linkCommand[4096];
+  char linkCommand[SIZEOFOUTPUT];
   sprintf(linkCommand,"ln -s \"%s\"",filename);
   int i=system(linkCommand);
+  //if (i!=0) { fprintf(stderr,"Got Back %u\n",i); }
   return (i==0);
 }
 
@@ -107,7 +108,10 @@ int runLdd(char * filename,int depth)
 
                                                   //If we make symlinks to them lets do it !
                                                   if (linkToLibraries)
-                                                    { if (linkToFileInCurrentDir(link)!=0) { fprintf(stderr,"Error linking to %s\n",link); } }
+                                                    {
+                                                      if (!linkToFileInCurrentDir(link))
+                                                       { fprintf(stderr,"Error linking to %s\n",link); }
+                                                    }
 
                                                   //Add it to our hash map
                                                   hashMap_Add(hm,link,0,0);
@@ -150,7 +154,7 @@ int main(int argc, const char* argv[])
          } else
     if (strcmp(argv[i],"-n")==0)    { printNotFoundLibs=1; printFoundLibs=0; } else
     if (strcmp(argv[i],"-f")==0)    { printNotFoundLibs=0; printFoundLibs=1; }
-    if (strcmp(argv[i],"-link")==0) {  printFoundLibs=1; linkToLibraries=1; }
+    if (strcmp(argv[i],"-link")==0) {  printFoundLibs=0; printNotFoundLibs=1; linkToLibraries=1; }
     if (strcmp(argv[i],"-maxDepth")==0)  {
                                           maxDepth = atoi(argv[i+1]);
                                          }
