@@ -64,8 +64,8 @@ int runLdd(char * filename,int depth)
     {
         ++i;
 
-        if ( strstr(output,"not found")!=0 ) {
-                                               if (printNotFoundLibs)  {  printf(RED "Not Found - Line %u , %s \n" NORMAL,i,output); }
+        if ( strstr(output,"not found")!=0 ) { //- Line %u , i
+                                               if (printNotFoundLibs)  {  printf(RED "Not Found (%s) %s\n" NORMAL,filename,output); }
                                              } else
                                              {
                                                //fprintf(stderr,GREEN "Found - Line %u , %s \n" NORMAL,i,output);

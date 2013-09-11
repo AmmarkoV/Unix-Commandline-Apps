@@ -118,7 +118,7 @@ void hashMap_Clear(struct hashMap * hm)
   unsigned int entryNumber = hm->curNumberOfEntries; //cur
 
   hm->curNumberOfEntries = 0;
-  fprintf(stderr,"hashMap_Clear with %u , %u ( %u max ) entries \n", i , entryNumber ,  hm->maxNumberOfEntries );
+  //fprintf(stderr,"hashMap_Clear with %u , %u ( %u max ) entries \n", i , entryNumber ,  hm->maxNumberOfEntries );
 
   while (i < entryNumber)
   {
