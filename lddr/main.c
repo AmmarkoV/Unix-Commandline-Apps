@@ -29,10 +29,28 @@
 
 int printFoundLibs = 1;
 int printNotFoundLibs = 1;
+int linkToLibraries = 0;
 int maxDepth=0;
 
 
 struct hashMap * hm=0;
+
+
+int linkToFileInCurrentDir(char * filename)
+{
+  char linkCommand[4096];
+  sprintf(linkCommand,"ln -s \"%s\"",filename);
+  int i=system(linkCommand);
+  return (i==0);
+}
+
+
+
+
+
+
+
+
 
 
 int runLdd(char * filename,int depth)
@@ -80,11 +98,21 @@ int runLdd(char * filename,int depth)
                                                    if (link[z]==' ') { link[z]=0; }
                                                    ++z;
                                                  }
-                                                  if (printFoundLibs)  { fprintf(stderr,"%s\n",link); }
 
                                                  if (!hashMap_ContainsKey(hm,link))
                                                  {
+                                                  //We have ourselves a new dynamic library !
+                                                  //If we print them , lets print it!
+                                                  if (printFoundLibs)  { fprintf(stderr,"%s\n",link); }
+
+                                                  //If we make symlinks to them lets do it !
+                                                  if (linkToLibraries)
+                                                    { if (linkToFileInCurrentDir(link)!=0) { fprintf(stderr,"Error linking to %s\n",link); } }
+
+                                                  //Add it to our hash map
                                                   hashMap_Add(hm,link,0,0);
+
+                                                  //Run LDD for the new library ..!
                                                   runLdd(link,depth+1);
                                                  }
                                                }
@@ -107,8 +135,22 @@ int main(int argc, const char* argv[])
   int i=0;
   for (i=0; i<argc; i++)
   {
-    if (strcmp(argv[i],"-n")==0) { printNotFoundLibs=1; printFoundLibs=0; } else
-    if (strcmp(argv[i],"-f")==0) { printNotFoundLibs=0; printFoundLibs=1; }
+    if (strcmp(argv[i],"-help")==0)
+         {
+           printf("Written by AmmarkoV -> https://github.com/AmmarkoV/ , http://ammar.gr \n");
+           printf("lddr , usage : \n");
+           printf("----------------------------------------------------------------------------------------\n");
+           printf("lddr -n BinaryPathHere will display NOT FOUND libraries that BinaryPathHere links to\n");
+           printf("lddr -link BinaryPathHere will create symlinks for all libraries that BinaryPathHere links to in current directory\n");
+           printf("lddr -f BinaryPathHere will create symlinks for all libraries that are FOUND and BinaryPathHere links to\n");
+           printf("-maxDepth X can be also provided to limit the depth of dependencies given \n");
+           printf("\nFor Example : lddr -n -maxDepth 5 ~/myBin.bin \n");
+           printf("The binary path should always be the last argument..!\n");
+           return 0;
+         } else
+    if (strcmp(argv[i],"-n")==0)    { printNotFoundLibs=1; printFoundLibs=0; } else
+    if (strcmp(argv[i],"-f")==0)    { printNotFoundLibs=0; printFoundLibs=1; }
+    if (strcmp(argv[i],"-link")==0) {  printFoundLibs=1; linkToLibraries=1; }
     if (strcmp(argv[i],"-maxDepth")==0)  {
                                           maxDepth = atoi(argv[i+1]);
                                          }
