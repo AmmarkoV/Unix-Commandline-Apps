@@ -24,15 +24,16 @@
 
 int main(int argc, const char* argv[])
 {
-  FILE * fp = fopen("paramSpy.txt","w");
+  FILE * fp = fopen("paramSpy.txt","a");
   if (fp!=0)
   {
     unsigned int i=0;
-    fprintf(fp,"%u arguments total\n",argc);
+    fprintf(fp,"New Run \n%u arguments total\n",argc);
     for (i=0; i<argc; i++)
      {
        fprintf(fp,"argument %u is %s \n",i,argv[i]);
      }
+    fprintf(fp,"Done\n",argc);
     fclose(fp);
   }
 
