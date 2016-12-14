@@ -1,0 +1,3 @@
+#!/bin/bash
+cc -s -Os -O3 -fexpensive-optimizations -o paramspy paramSpy.c
+exit 0

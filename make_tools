@@ -13,5 +13,9 @@ cd lddr
 ./make
 cd ..
 
+cd paramspy 
+./make
+cd ..
+
 
 exit 0
