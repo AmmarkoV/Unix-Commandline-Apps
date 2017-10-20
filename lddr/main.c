@@ -132,26 +132,39 @@ int runLdd(char * filename,int depth)
   return 1;
 }
 
-
+void displayHelp()
+{
+  printf("Written by AmmarkoV -> https://github.com/AmmarkoV/ , http://ammar.gr \n");
+  printf("lddr , usage : \n");
+  printf("----------------------------------------------------------------------------------------\n");
+  printf("lddr -n BinaryPathHere will display NOT FOUND libraries that BinaryPathHere links to\n");
+  printf("lddr -link BinaryPathHere will create symlinks for all libraries that BinaryPathHere links to in current directory\n");
+  printf("lddr -f BinaryPathHere will create symlinks for all libraries that are FOUND and BinaryPathHere links to\n");
+  printf("-maxDepth X can be also provided to limit the depth of dependencies given \n");
+  printf("\nFor Example : lddr -n -maxDepth 5 ~/myBin.bin \n");
+  printf("The binary path should always be the last argument..!\n");
+}
 
 int main(int argc, const char* argv[])
 {
   int i=0;
+
+  if (argc==1)
+    {
+      displayHelp();
+      return 0;
+    }
   for (i=0; i<argc; i++)
   {
-    if (strcmp(argv[i],"-help")==0)
-         {
-           printf("Written by AmmarkoV -> https://github.com/AmmarkoV/ , http://ammar.gr \n");
-           printf("lddr , usage : \n");
-           printf("----------------------------------------------------------------------------------------\n");
-           printf("lddr -n BinaryPathHere will display NOT FOUND libraries that BinaryPathHere links to\n");
-           printf("lddr -link BinaryPathHere will create symlinks for all libraries that BinaryPathHere links to in current directory\n");
-           printf("lddr -f BinaryPathHere will create symlinks for all libraries that are FOUND and BinaryPathHere links to\n");
-           printf("-maxDepth X can be also provided to limit the depth of dependencies given \n");
-           printf("\nFor Example : lddr -n -maxDepth 5 ~/myBin.bin \n");
-           printf("The binary path should always be the last argument..!\n");
-           return 0;
-         } else
+    if (
+         (strcmp(argv[i],"--help")==0) ||
+         (strcmp(argv[i],"-h")==0) ||
+         (strcmp(argv[i],"?")==0)
+        )
+    {
+      displayHelp();
+      return 0;
+    }  else
     if (strcmp(argv[i],"-n")==0)    { printNotFoundLibs=1; printFoundLibs=0; } else
     if (strcmp(argv[i],"-f")==0)    { printNotFoundLibs=0; printFoundLibs=1; }
     if (strcmp(argv[i],"-link")==0) {  printFoundLibs=0; printNotFoundLibs=1; linkToLibraries=1; }
