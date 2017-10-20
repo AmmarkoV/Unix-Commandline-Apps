@@ -33,7 +33,7 @@ int main(int argc, const char* argv[])
      {
        fprintf(fp,"argument %u is %s \n",i,argv[i]);
      }
-    fprintf(fp,"Done\n",argc);
+    fprintf(fp,"Done\n");
     fclose(fp);
   }
 

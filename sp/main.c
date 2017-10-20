@@ -56,7 +56,7 @@ int main(int argc, const char* argv[]) {
      */
     tempfile = tempnam("/tmp", "tmp.mv");
     if (tempfile == NULL) {
-        fprintf(stderr, errtmpcrt);
+        fprintf(stderr, "%s" , errtmpcrt);
         return ETMPFAIL;
     }
 
