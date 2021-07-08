@@ -1,3 +1,4 @@
 #!/bin/bash
+mkdir -p bin/Release
 cc -s -Os -O3 -fexpensive-optimizations -o lddr main.c hashmap.c
 exit 0
