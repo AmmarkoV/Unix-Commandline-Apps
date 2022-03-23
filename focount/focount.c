@@ -106,7 +106,7 @@ int main(int argc, const char* argv[])
     while (thisReadLength==blockSize)
     {
       thisReadLength = fread(buffer+patternSize, 1, blockSize , fp);
-      occurrences += countOccurences(buffer,thisReadLength+patternSize,pattern,patternSize);
+      occurrences += countOccurences(buffer+1,thisReadLength+patternSize,pattern,patternSize);
 
       memcpy(buffer,buffer+(thisReadLength-patternSize),patternSize*sizeof(char));
     }
