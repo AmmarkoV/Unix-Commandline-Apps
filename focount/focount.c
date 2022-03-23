@@ -1,5 +1,5 @@
 /***************************************************************************
-* Copyright (C) 2022 by Ammar Qammaz *
+* Copyright (C) 2022 by Ammar Qammaz a.k.a AmmarkoV*
 * ammarkov@gmail.com *
 * *
 * This program is free software; you can redistribute it and/or modify *
@@ -59,7 +59,7 @@ unsigned int countOccurences(const char * bigBuffer,unsigned int bigBufferSize,c
 
 
 //I wrote this because of a project I am involved with
-//where I need to count occurances of a pattern in ungodly big files
+//where I need to count occurences of a pattern in ungodly big files
 //hope someone else finds it useful.
 // It is basically a glorified  ` cat dataset.json | grep -o annotationId | wc -l `
 
@@ -71,7 +71,7 @@ int main(int argc, const char* argv[])
      return 1;
    }
 
-  const unsigned int blockSize = 32000; //32K
+  const unsigned int blockSize = 128000; //128K
   //------------------------------------------
   const char * filename = argv[1];
   const char * pattern  = argv[2];
@@ -106,7 +106,7 @@ int main(int argc, const char* argv[])
     while (thisReadLength==blockSize)
     {
       thisReadLength = fread(buffer+patternSize, 1, blockSize , fp);
-      occurences += countOccurences(buffer+patternSize-1,thisReadLength,pattern,patternSize);
+      occurences += countOccurences(buffer,thisReadLength+patternSize,pattern,patternSize);
 
       memcpy(buffer,buffer+(thisReadLength-patternSize),patternSize*sizeof(char));
     }
