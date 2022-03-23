@@ -25,7 +25,7 @@
 
 unsigned int countOccurences(const char * bigBuffer,unsigned int bigBufferSize,const char * smallPattern,unsigned int smallPaternSize)
 {
-  unsigned int occurences = 0;
+  unsigned int occurrences = 0;
   unsigned int matched    = 0;
 
   const char * bigBufferEnd = bigBuffer + bigBufferSize;
@@ -42,7 +42,7 @@ unsigned int countOccurences(const char * bigBuffer,unsigned int bigBufferSize,c
       {
         matched=0;
         ptr = smallPattern;
-        occurences+=1;
+        occurrences+=1;
        }
     } else
     {
@@ -53,13 +53,13 @@ unsigned int countOccurences(const char * bigBuffer,unsigned int bigBufferSize,c
     bigBuffer+=1;
   }
 
-   return occurences;
+   return occurrences;
 }
 
 
 
 //I wrote this because of a project I am involved with
-//where I need to count occurences of a pattern in ungodly big files
+//where I need to count occurrences of a pattern in ungodly big files
 //hope someone else finds it useful.
 // It is basically a glorified  ` cat dataset.json | grep -o annotationId | wc -l `
 
@@ -100,18 +100,18 @@ int main(int argc, const char* argv[])
     //Make sure the buffer is
     buffer[blockSize]=0; //<- always null-terminated no matter what
 
-    unsigned long long occurences = 0;
+    unsigned long long occurrences = 0;
     unsigned int thisReadLength = blockSize;
 
     while (thisReadLength==blockSize)
     {
       thisReadLength = fread(buffer+patternSize, 1, blockSize , fp);
-      occurences += countOccurences(buffer,thisReadLength+patternSize,pattern,patternSize);
+      occurrences += countOccurences(buffer,thisReadLength+patternSize,pattern,patternSize);
 
       memcpy(buffer,buffer+(thisReadLength-patternSize),patternSize*sizeof(char));
     }
 
-    fprintf(stdout,"%llu\n",occurences);
+    fprintf(stdout,"%llu\n",occurrences);
 
     free(buffer);
     buffer = 0;
