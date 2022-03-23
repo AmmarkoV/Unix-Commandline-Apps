@@ -23,6 +23,38 @@
 #include <string.h>
 
 
+unsigned int countOccurences(const char * bigBuffer,unsigned int bigBufferSize,const char * smallPattern,unsigned int smallPaternSize)
+{
+  unsigned int occurences = 0;
+  unsigned int matched    = 0;
+
+  const char * bigBufferEnd = bigBuffer + bigBufferSize;
+  char  * ptr = smallPattern;
+
+  while (bigBuffer<bigBufferEnd)
+  {
+    if (*bigBuffer==*ptr)
+    {
+      ++matched;
+      ptr+=1;
+
+      if (matched==smallPaternSize)
+      {
+        ptr = smallPattern;
+        matched=0;
+        occurences+=1;
+       }
+
+    }
+
+    bigBuffer+=1;
+  }
+
+   return occurences;
+}
+
+
+
 //I wrote this because of a project I am involved with
 //where I need to count occurances of a pattern in ungodly big files
 //hope someone else finds it useful.
@@ -34,24 +66,33 @@ int main(int argc, const char* argv[])
      return 1;
    }
 
-  const unsigned int blockSize = 32000; //32K
-  char buffer[blockSize];
-
+  //------------------------------------------
   const char * filename = argv[1];
   const char * pattern  = argv[2];
   unsigned int patternSize = strlen(pattern);
+  //------------------------------------------
   FILE * fp = fopen(filename,"r");
   if (fp!=0)
   {
+  const unsigned int blockSize = 32000; //32K
+  char * buffer = (char *) malloc(sizeof(char) * (blockSize+1) );
+  if (buffer!=0)
+  {
+  buffer[blockSize]=0; //<- always null-terminated no matter what
+
     unsigned long long occurences = 0;
     unsigned int thisReadLength = blockSize;
 
     while (thisReadLength==blockSize)
     {
       thisReadLength = fread(buffer, 1, blockSize , fp);
+      occurences += countOccurences(buffer,thisReadLength,pattern,patternSize);
     }
-    unsigned int i=0;
-    fprintf(fp,"Done\n");
+
+    free(buffer);
+    buffer = 0;
+  }
+
     fclose(fp);
     return 0;
   }
