@@ -29,7 +29,7 @@ unsigned int countOccurences(const char * bigBuffer,unsigned int bigBufferSize,c
   unsigned int matched    = 0;
 
   const char * bigBufferEnd = bigBuffer + bigBufferSize;
-  char  * ptr = smallPattern;
+  const char  * ptr = smallPattern;
 
   while (bigBuffer<bigBufferEnd)
   {
